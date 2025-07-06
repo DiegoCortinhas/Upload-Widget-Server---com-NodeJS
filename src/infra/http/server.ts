@@ -1,8 +1,16 @@
 import { fastify } from "fastify";
+import {env} from '@/env'
 import { fastifyCors } from "@fastify/cors";
-import { env } from "@/env";
-import {serializerCompiler,validatorCompiler,hasZodFastifySchemaValidationErrors} from 'fastify-type-provider-zod'
+import {
+    serializerCompiler,
+    validatorCompiler,
+    hasZodFastifySchemaValidationErrors, 
+    jsonSchemaTransform
+} from 'fastify-type-provider-zod'
 import { uploadImageRoute } from "./routes/upload-image";
+import fastifyMultipart from "@fastify/multipart";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
 
 
 const server = fastify()
@@ -26,7 +34,22 @@ server.setErrorHandler((error,request,reply) =>{
 
 server.register(fastifyCors, { origin: '*' })
 
-console.log(env.DATABASE_URL)
+server.register(fastifyMultipart)
+server.register(fastifySwagger,{
+    openapi:{
+        info:{
+            title: 'Upload Server',
+            version: '1.0.0',
+        },
+    },
+    transform: jsonSchemaTransform,
+})
+
+server.register(fastifySwaggerUi, {
+    routePrefix: '/docs',
+})
+
+//console.log(env.DATABASE_URL)
 server.register(uploadImageRoute)
 
 server.listen({ port: 3333, host: '0.0.0.0' }).then(() => {
