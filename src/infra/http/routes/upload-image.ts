@@ -8,9 +8,6 @@ export const uploadImageRoute: FastifyPluginAsyncZod = async server=>{
         schema:{
             summary: 'Upload an Image',
             consumes: ['multipart/form-data'],
-            /*body: z.object({
-                file: z.instanceof(File),
-            }),*/
             response:{
                 201: z.null().describe('Image uploaded.'),
                 400: z.object({message:z.string() }),
@@ -22,11 +19,7 @@ export const uploadImageRoute: FastifyPluginAsyncZod = async server=>{
             limits:{fileSize: 1024*1024*2 //2MB                
             }
         })
-        /*await db.insert(schema.uploads).values({
-            name: 'teste.jpg',
-            remoteKey: 'teste.jpg',
-            remoteUrl: 'http://hadhahdha.com'
-        })*/
+        
         if(!uploadedFile){
             return reply.status(400).send({message: 'File is required.'})
         }
@@ -39,6 +32,7 @@ export const uploadImageRoute: FastifyPluginAsyncZod = async server=>{
         })
 
         if(isRight(result)){
+            console.log(unwrapEither(result))
             return reply.status(201).send()
         }
         const error = unwrapEither(result)
