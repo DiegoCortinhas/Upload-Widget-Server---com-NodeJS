@@ -10,6 +10,7 @@ import fastifyMultipart from "@fastify/multipart";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import { transformSwaggerSchema } from "./routes/transform-swagger-schema";
+import { getUploadsRoute } from "./routes/get-uploads";
 
 
 const server = fastify()
@@ -50,6 +51,7 @@ server.register(fastifySwaggerUi, {
 
 //console.log(env.DATABASE_URL)
 server.register(uploadImageRoute)
+server.register(getUploadsRoute)
 
 server.listen({ port: 3333, host: '0.0.0.0' }).then(() => {
     console.log('HTTP server is running')
